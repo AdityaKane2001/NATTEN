@@ -1,0 +1,15 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:35:31,949 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                 Profiler results                                  
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 14.345ms │
+│           │                 │      │         Total         │         │ 14.345ms │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴──────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))

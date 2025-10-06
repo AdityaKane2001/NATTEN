@@ -1,0 +1,29 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+| 2025-08-28 16:08:59,400 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │        -        │  -   │              flash.flash_fwd_kernel              │    1    │ 59.451ms  │
+│  CUTLASS  │        -        │  -   │         flash.flash_bwd_dot_do_o_kernel          │    1    │ 473.372us │
+│  CUTLASS  │        -        │  -   │ flash.flash_bwd_dq_dk_dv_loop_seqk_parallel_k... │    1    │ 169.604ms │
+│  CUTLASS  │        -        │  -   │        flash.flash_bwd_convert_dq_kernel         │    1    │ 363.549us │
+│           │                 │      │                      Total                       │         │ 229.892ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 2D use case...
+--- Profiling Flash Attention...
+| 2025-08-28 16:09:08,018 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │        -        │  -   │              flash.flash_fwd_kernel              │    1    │ 243.737ms │
+│  CUTLASS  │        -        │  -   │         flash.flash_bwd_dot_do_o_kernel          │    1    │ 948.633us │
+│  CUTLASS  │        -        │  -   │ flash.flash_bwd_dq_dk_dv_loop_seqk_parallel_k... │    1    │ 677.839ms │
+│  CUTLASS  │        -        │  -   │        flash.flash_bwd_convert_dq_kernel         │    1    │ 730.042us │
+│           │                 │      │                      Total                       │         │ 923.255ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 3D use case...
+--- Profiling Flash Attention...
+| 2025-08-28 16:09:24,115 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.

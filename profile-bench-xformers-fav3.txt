@@ -1,0 +1,29 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/akane38/NATTEN/src/natten/profiler.py", line 689, in <module>
+    profile(**vars(args))
+  File "/home/akane38/NATTEN/src/natten/profiler.py", line 601, in profile
+    ) = optimize_fn(
+        ^^^^^^^^^^^^
+  File "/home/akane38/NATTEN/src/natten/profiling_utils/dry_run.py", line 386, in optimize
+    raise ValueError(
+ValueError: Optimize is only available for NATTEN backends, got backend='xformers'.
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+backend='fa' problem.dtype=torch.float16
+| 2025-09-25 15:12:57,463 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                  Profiler results                                   
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃    Framework    ┃ Kernel category ┃ Arch ┃    Operation     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│ Flash Attention │    attention    │  -   │   FlashForward   │    1    │ 60.455ms  │
+│ Flash Attention │    attention    │  -   │  FlashBackward   │    1    │ 168.567ms │
+│ Flash Attention │    reduction    │  -   │  FlashReduction  │    1    │ 460.508us │
+│ Flash Attention │   elementwise   │  -   │ FlashElementwise │    1    │ 358.141us │
+│                 │                 │      │      Total       │         │ 229.840ms │
+└─────────────────┴─────────────────┴──────┴──────────────────┴─────────┴───────────┘

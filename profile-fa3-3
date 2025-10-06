@@ -1,0 +1,286 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:36:29,453 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:36:29,759 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.42%      70.619us        17.90%       2.997ms     749.164us       0.000us         0.00%       0.000us       0.000us             4  
+                                Activity Buffer Request        17.47%       2.926ms        17.47%       2.926ms       2.926ms       0.000us         0.00%       0.000us       0.000us             1  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      48.735us         0.34%      48.735us      12.184us             4  
+                                   cudaFuncSetAttribute         0.13%      21.870us         0.13%      21.870us       7.290us       0.000us         0.00%       0.000us       0.000us             3  
+                                       cudaLaunchKernel         0.52%      86.402us         0.52%      86.402us      21.601us       0.000us         0.00%       0.000us       0.000us             4  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us       4.125ms        28.65%       4.125ms       4.125ms             1  
+                                  cudaDeviceSynchronize        81.46%      13.640ms        81.46%      13.640ms      13.640ms       0.000us         0.00%       0.000us       0.000us             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPrepr...         0.00%       0.000us         0.00%       0.000us       0.000us      20.479us         0.14%      20.479us      20.479us             1  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us      10.188ms        70.76%      10.188ms      10.188ms             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPostp...         0.00%       0.000us         0.00%       0.000us       0.000us      15.872us         0.11%      15.872us      15.872us             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 16.745ms
+Self CUDA time total: 14.398ms
+
+                                 Profiler results                                  
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 14.349ms │
+│           │                 │      │         Total         │         │ 14.349ms │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴──────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:36:36,523 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:36:37,669 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.29%      47.890us        11.11%       1.837ms     459.293us       0.000us         0.00%       0.000us       0.000us             4  
+                                Activity Buffer Request        10.82%       1.789ms        10.82%       1.789ms       1.789ms       0.000us         0.00%       0.000us       0.000us             1  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      46.974us         0.31%      46.974us      11.743us             4  
+                                  cudaStreamIsCapturing         0.01%       1.080us         0.01%       1.080us       1.080us       0.000us         0.00%       0.000us       0.000us             1  
+                                         cuLaunchKernel         0.27%      43.962us         0.27%      43.962us      10.990us       0.000us         0.00%       0.000us       0.000us             4  
+cudnn_generated_fort_native_sdpa_sm80_flash_fprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us       2.921ms        19.27%       2.921ms       2.921ms             1  
+                                        cudaMemsetAsync         0.22%      36.000us         0.22%      36.000us      36.000us       0.000us         0.00%       0.000us       0.000us             1  
+                                    cudaGetFuncBySymbol         0.01%       0.951us         0.01%       0.951us       0.476us       0.000us         0.00%       0.000us       0.000us             2  
+                                  cudaDeviceSynchronize        88.40%      14.623ms        88.40%      14.623ms      14.623ms       0.000us         0.00%       0.000us       0.000us             1  
+                                        Memset (Device)         0.00%       0.000us         0.00%       0.000us       0.000us       9.312us         0.06%       9.312us       9.312us             1  
+void cudnn::fusion::compute_dot_do_o_specialized<fal...         0.00%       0.000us         0.00%       0.000us       0.000us      23.488us         0.15%      23.488us      23.488us             1  
+cudnn_generated_fort_native_sdpa_sm80_flash_bprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us      12.133ms        80.05%      12.133ms      12.133ms             1  
+void cudnn::fusion::rearrange_n_convert_dq<false>(vo...         0.00%       0.000us         0.00%       0.000us       0.000us      23.296us         0.15%      23.296us      23.296us             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 16.542ms
+Self CUDA time total: 15.156ms
+
+                                               Profiler results                                               
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 2.921ms  │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │ 23.488us │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │ 12.133ms │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │ 23.296us │
+│           │                 │      │                      Total                       │         │ 15.100ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴──────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:36:44,399 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:36:44,809 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.18%      55.180us         6.41%       1.919ms     479.686us       0.000us         0.00%       0.000us       0.000us             4  
+                                Activity Buffer Request         6.23%       1.864ms         6.23%       1.864ms       1.864ms       0.000us         0.00%       0.000us       0.000us             1  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      46.304us         0.16%      46.304us      11.576us             4  
+                                  cudaStreamIsCapturing         0.01%       1.550us         0.01%       1.550us       1.550us       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.06%      18.330us         0.06%      18.330us       9.165us       0.000us         0.00%       0.000us       0.000us             2  
+                                       cudaLaunchKernel         0.25%      73.481us         0.25%      73.481us      24.494us       0.000us         0.00%       0.000us       0.000us             3  
+fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTorchMemE...         0.00%       0.000us         0.00%       0.000us       0.000us       5.313ms        18.60%       5.313ms       5.313ms             1  
+                                  cudaFuncGetAttributes         0.02%       6.550us         0.02%       6.550us       6.550us       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaDeviceSynchronize        93.25%      27.902ms        93.25%      27.902ms      27.902ms       0.000us         0.00%       0.000us       0.000us             1  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       8.640us         0.03%       8.640us       8.640us             1  
+fmha_cutlassB_f16_aligned_128x128_k128_seqaligned_sm...         0.00%       0.000us         0.00%       0.000us       0.000us      23.192ms        81.20%      23.192ms      23.192ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 29.920ms
+Self CUDA time total: 28.560ms
+
+                                               Profiler results                                               
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 5.313ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 8.640us  │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │ 23.192ms │
+│           │                 │      │                      Total                       │         │ 28.513ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴──────────┘
+****** Profiling 2D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:36:51,441 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:37:01,733 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.01%      87.151us         0.20%       1.862ms     465.428us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       1.809ms         0.19%       1.809ms     452.141us             4  
+                                Activity Buffer Request         0.19%       1.775ms         0.19%       1.775ms       1.775ms       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.00%      35.580us         0.00%      35.580us      11.860us       0.000us         0.00%       0.000us       0.000us             3  
+                                       cudaLaunchKernel         0.02%     148.383us         0.02%     148.383us      37.096us       0.000us         0.00%       0.000us       0.000us             4  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us     246.835ms        26.58%     246.835ms     246.835ms             1  
+                                  cudaDeviceSynchronize        99.78%     926.086ms        99.78%     926.086ms     926.086ms       0.000us         0.00%       0.000us       0.000us             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPrepr...         0.00%       0.000us         0.00%       0.000us       0.000us     922.746us         0.10%     922.746us     922.746us             1  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us     678.212ms        73.04%     678.212ms     678.212ms             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPostp...         0.00%       0.000us         0.00%       0.000us       0.000us     707.515us         0.08%     707.515us     707.515us             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 928.131ms
+Self CUDA time total: 928.486ms
+
+                                  Profiler results                                  
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 926.677ms │
+│           │                 │      │         Total         │         │ 926.677ms │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴───────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:37:08,464 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:37:22,520 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.01%     105.973us         0.17%       2.064ms     515.959us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       1.827ms         0.15%       1.827ms     456.677us             4  
+                                Activity Buffer Request         0.16%       1.958ms         0.16%       1.958ms       1.958ms       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaStreamIsCapturing         0.00%       2.480us         0.00%       2.480us       2.480us       0.000us         0.00%       0.000us       0.000us             1  
+                                         cuLaunchKernel         0.01%      79.531us         0.01%      79.531us      19.883us       0.000us         0.00%       0.000us       0.000us             4  
+                                        cudaMemsetAsync         0.00%      32.701us         0.00%      32.701us      32.701us       0.000us         0.00%       0.000us       0.000us             1  
+                                    cudaGetFuncBySymbol         0.00%       6.819us         0.00%       6.819us       3.409us       0.000us         0.00%       0.000us       0.000us             2  
+cudnn_generated_fort_native_sdpa_sm80_flash_fprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us     282.489ms        23.35%     282.489ms     282.489ms             1  
+                                  cudaDeviceSynchronize        99.82%        1.208s        99.82%        1.208s        1.208s       0.000us         0.00%       0.000us       0.000us             1  
+                                        Memset (Device)         0.00%       0.000us         0.00%       0.000us       0.000us     403.166us         0.03%     403.166us     403.166us             1  
+void cudnn::fusion::compute_dot_do_o_specialized<fal...         0.00%       0.000us         0.00%       0.000us       0.000us     940.475us         0.08%     940.475us     940.475us             1  
+cudnn_generated_fort_native_sdpa_sm80_flash_bprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us     922.867ms        76.29%     922.867ms     922.867ms             1  
+void cudnn::fusion::rearrange_n_convert_dq<false>(vo...         0.00%       0.000us         0.00%       0.000us       0.000us       1.218ms         0.10%       1.218ms       1.218ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 1.210s
+Self CUDA time total: 1.210s
+
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 282.489ms │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │ 940.475us │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │ 922.867ms │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │  1.218ms  │
+│           │                 │      │                      Total                       │         │  1.208s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:37:29,115 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:37:55,252 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.00%      93.001us         0.09%       2.225ms     556.282us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       1.821ms         0.08%       1.821ms     455.230us             4  
+                                Activity Buffer Request         0.09%       2.132ms         0.09%       2.132ms       2.132ms       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaStreamIsCapturing         0.00%       2.880us         0.00%       2.880us       2.880us       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.00%      40.370us         0.00%      40.370us      20.185us       0.000us         0.00%       0.000us       0.000us             2  
+                                       cudaLaunchKernel         0.01%     122.411us         0.01%     122.411us      17.487us       0.000us         0.00%       0.000us       0.000us             7  
+                                  cudaFuncGetAttributes         0.00%       4.710us         0.00%       4.710us       4.710us       0.000us         0.00%       0.000us       0.000us             1  
+fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTorchMemE...         0.00%       0.000us         0.00%       0.000us       0.000us     473.310ms        20.05%     473.310ms     473.310ms             1  
+                                  cudaDeviceSynchronize        99.90%        2.358s        99.90%        2.358s        2.358s       0.000us         0.00%       0.000us       0.000us             1  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       3.520ms         0.15%       3.520ms     879.997us             4  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     395.743us         0.02%     395.743us     395.743us             1  
+fmha_cutlassB_f16_aligned_128x128_k128_seqaligned_sm...         0.00%       0.000us         0.00%       0.000us       0.000us        1.881s        79.71%        1.881s        1.881s             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 2.361s
+Self CUDA time total: 2.361s
+
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 473.310ms │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  3.520ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 395.743us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  1.881s   │
+│           │                 │      │                      Total                       │         │  2.359s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 3D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:38:01,893 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:38:34,839 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.00%      95.372us         0.07%       2.229ms     557.227us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       3.181ms         0.11%       3.181ms     795.295us             4  
+                                Activity Buffer Request         0.07%       2.134ms         0.07%       2.134ms       2.134ms       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.00%      37.091us         0.00%      37.091us      12.364us       0.000us         0.00%       0.000us       0.000us             3  
+                                       cudaLaunchKernel         0.00%     127.411us         0.00%     127.411us      31.853us       0.000us         0.00%       0.000us       0.000us             4  
+                                  cudaDeviceSynchronize        99.92%        2.979s        99.92%        2.979s        2.979s       0.000us         0.00%       0.000us       0.000us             1  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us     773.399ms        25.93%     773.399ms     773.399ms             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPrepr...         0.00%       0.000us         0.00%       0.000us       0.000us       1.646ms         0.06%       1.646ms       1.646ms             1  
+void cutlass::device_kernel<flash::enable_sm80_to_sm...         0.00%       0.000us         0.00%       0.000us       0.000us        2.203s        73.86%        2.203s        2.203s             1  
+void cutlass::device_kernel<flash::FlashAttnBwdPostp...         0.00%       0.000us         0.00%       0.000us       0.000us       1.239ms         0.04%       1.239ms       1.239ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 2.982s
+Self CUDA time total: 2.982s
+
+                                 Profiler results                                 
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃ Runtime ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 2.979s  │
+│           │                 │      │         Total         │         │ 2.979s  │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴─────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:38:41,538 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:39:23,293 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.00%      93.712us         0.05%       1.877ms     469.311us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       3.197ms         0.09%       3.197ms     799.359us             4  
+                                Activity Buffer Request         0.05%       1.784ms         0.05%       1.784ms       1.784ms       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaStreamIsCapturing         0.00%       2.510us         0.00%       2.510us       2.510us       0.000us         0.00%       0.000us       0.000us             1  
+                                         cuLaunchKernel         0.00%      76.322us         0.00%      76.322us      19.081us       0.000us         0.00%       0.000us       0.000us             4  
+                                        cudaMemsetAsync         0.00%      78.511us         0.00%      78.511us      78.511us       0.000us         0.00%       0.000us       0.000us             1  
+                                    cudaGetFuncBySymbol         0.00%       7.010us         0.00%       7.010us       3.505us       0.000us         0.00%       0.000us       0.000us             2  
+                                  cudaDeviceSynchronize        99.95%        3.755s        99.95%        3.755s        3.755s       0.000us         0.00%       0.000us       0.000us             1  
+cudnn_generated_fort_native_sdpa_sm80_flash_fprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us     876.957ms        23.34%     876.957ms     876.957ms             1  
+                                        Memset (Device)         0.00%       0.000us         0.00%       0.000us       0.000us     794.111us         0.02%     794.111us     794.111us             1  
+void cudnn::fusion::compute_dot_do_o_specialized<fal...         0.00%       0.000us         0.00%       0.000us       0.000us       1.651ms         0.04%       1.651ms       1.651ms             1  
+cudnn_generated_fort_native_sdpa_sm80_flash_bprop_wm...         0.00%       0.000us         0.00%       0.000us       0.000us        2.873s        76.45%        2.873s        2.873s             1  
+void cudnn::fusion::rearrange_n_convert_dq<false>(vo...         0.00%       0.000us         0.00%       0.000us       0.000us       2.140ms         0.06%       2.140ms       2.140ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 3.757s
+Self CUDA time total: 3.758s
+
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 876.957ms │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │  1.651ms  │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │  2.873s   │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │  2.140ms  │
+│           │                 │      │                      Total                       │         │  3.754s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 17:39:29,843 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+| 2025-08-27 17:40:52,415 | [[ natten.profiling_utils.profiling ]] [ DEBUG ]: -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync         0.00%      88.772us         0.03%       1.913ms     478.278us       0.000us         0.00%       0.000us       0.000us             4  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       3.202ms         0.04%       3.202ms     800.606us             4  
+                                Activity Buffer Request         0.02%       1.824ms         0.02%       1.824ms       1.824ms       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaStreamIsCapturing         0.00%       2.389us         0.00%       2.389us       2.389us       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.00%      28.710us         0.00%      28.710us      14.355us       0.000us         0.00%       0.000us       0.000us             2  
+                                       cudaLaunchKernel         0.00%     173.702us         0.00%     173.702us      24.815us       0.000us         0.00%       0.000us       0.000us             7  
+                                  cudaFuncGetAttributes         0.00%       6.560us         0.00%       6.560us       6.560us       0.000us         0.00%       0.000us       0.000us             1  
+                                  cudaDeviceSynchronize        99.97%        7.512s        99.97%        7.512s        7.512s       0.000us         0.00%       0.000us       0.000us             1  
+fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTorchMemE...         0.00%       0.000us         0.00%       0.000us       0.000us        1.469s        19.54%        1.469s        1.469s             1  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       6.228ms         0.08%       6.228ms       1.557ms             4  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     743.454us         0.01%     743.454us     743.454us             1  
+fmha_cutlassB_f16_aligned_128x128_k128_seqaligned_sm...         0.00%       0.000us         0.00%       0.000us       0.000us        6.036s        80.32%        6.036s        6.036s             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 7.514s
+Self CUDA time total: 7.514s
+
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │  1.469s   │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  6.228ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 743.454us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  6.036s   │
+│           │                 │      │                      Total                       │         │  7.511s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘

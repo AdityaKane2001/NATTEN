@@ -1,0 +1,141 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+
+Searching 3 forward pass configs
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:00<00:01,  1.32it/s] 67%|██████▋   | 2/3 [00:02<00:01,  1.14s/it]100%|██████████| 3/3 [00:02<00:00,  1.09it/s]100%|██████████| 3/3 [00:02<00:00,  1.07it/s]
+
+Searching 2 backward pass configs
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.75s/it]100%|██████████| 2/2 [00:10<00:00,  4.93s/it]100%|██████████| 2/2 [00:10<00:00,  5.21s/it]
+
+           Best configuration           
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃       Parameter       ┃    Value     ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+│        backend        │ cutlass-fna  │
+│     fmha_backend      │ cutlass-fmha │
+│      q_tile_size      │      64      │
+│     kv_tile_size      │     128      │
+│ backward_q_tile_size  │     128      │
+│ backward_kv_tile_size │     128      │
+└───────────────────────┴──────────────┘
+
+                                      Profiler results                                      
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃           Operation           ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │          FmhaForward          │    1    │ 103.231ms │
+│  CUTLASS  │    attention    │ Sm80 │         FmhaBackward          │    1    │ 365.632ms │
+│  CUTLASS  │    reduction    │  -   │           Reduction           │    1    │ 445.117us │
+│  PyTorch  │   elementwise   │  -   │ vectorized_elementwise_kernel │    2    │ 201.343us │
+│           │                 │      │             Total             │         │ 469.509ms │
+└───────────┴─────────────────┴──────┴───────────────────────────────┴─────────┴───────────┘
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+backend='fa' problem.dtype=torch.float16
+| 2025-09-25 15:23:57,427 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                  Profiler results                                   
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃    Framework    ┃ Kernel category ┃ Arch ┃    Operation     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│ Flash Attention │    attention    │  -   │   FlashForward   │    1    │ 60.361ms  │
+│ Flash Attention │    attention    │  -   │  FlashBackward   │    1    │ 170.195ms │
+│ Flash Attention │    reduction    │  -   │  FlashReduction  │    1    │ 460.958us │
+│ Flash Attention │   elementwise   │  -   │ FlashElementwise │    1    │ 356.638us │
+│                 │                 │      │      Total       │         │ 231.374ms │
+└─────────────────┴─────────────────┴──────┴──────────────────┴─────────┴───────────┘
+****** Profiling 2D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+
+Searching 3 forward pass configs
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:02<00:05,  2.98s/it] 67%|██████▋   | 2/3 [00:09<00:05,  5.22s/it]100%|██████████| 3/3 [00:12<00:00,  4.01s/it]100%|██████████| 3/3 [00:12<00:00,  4.11s/it]
+
+Searching 2 backward pass configs
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:28<00:28, 28.05s/it]100%|██████████| 2/2 [00:43<00:00, 20.84s/it]100%|██████████| 2/2 [00:43<00:00, 21.92s/it]
+
+           Best configuration           
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃       Parameter       ┃    Value     ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+│        backend        │ cutlass-fna  │
+│     fmha_backend      │ cutlass-fmha │
+│      q_tile_size      │      64      │
+│     kv_tile_size      │     128      │
+│ backward_q_tile_size  │     128      │
+│ backward_kv_tile_size │     128      │
+└───────────────────────┴──────────────┘
+
+                                      Profiler results                                      
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃           Operation           ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │          FmhaForward          │    1    │ 424.660ms │
+│  CUTLASS  │    attention    │ Sm80 │         FmhaBackward          │    1    │  1.465s   │
+│  CUTLASS  │    reduction    │  -   │           Reduction           │    1    │ 879.198us │
+│  PyTorch  │   elementwise   │  -   │ vectorized_elementwise_kernel │    2    │ 402.367us │
+│           │                 │      │             Total             │         │  1.891s   │
+└───────────┴─────────────────┴──────┴───────────────────────────────┴─────────┴───────────┘
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+backend='fa' problem.dtype=torch.float16
+| 2025-09-25 15:25:29,820 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                  Profiler results                                   
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃    Framework    ┃ Kernel category ┃ Arch ┃    Operation     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│ Flash Attention │    attention    │  -   │   FlashForward   │    1    │ 249.987ms │
+│ Flash Attention │    attention    │  -   │  FlashBackward   │    1    │ 685.533ms │
+│ Flash Attention │    reduction    │  -   │  FlashReduction  │    1    │ 923.966us │
+│ Flash Attention │   elementwise   │  -   │ FlashElementwise │    1    │ 706.846us │
+│                 │                 │      │      Total       │         │ 937.151ms │
+└─────────────────┴─────────────────┴──────┴──────────────────┴─────────┴───────────┘
+****** Profiling 3D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+
+Searching 3 forward pass configs
+  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:10<00:20, 10.09s/it] 67%|██████▋   | 2/3 [00:33<00:17, 17.87s/it]100%|██████████| 3/3 [00:41<00:00, 13.34s/it]100%|██████████| 3/3 [00:41<00:00, 13.79s/it]
+
+Searching 2 backward pass configs
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [01:38<01:38, 98.67s/it]100%|██████████| 2/2 [02:29<00:00, 70.58s/it]100%|██████████| 2/2 [02:29<00:00, 74.79s/it]
+
+           Best configuration           
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃       Parameter       ┃    Value     ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+│        backend        │ cutlass-fna  │
+│     fmha_backend      │ cutlass-fmha │
+│      q_tile_size      │      64      │
+│     kv_tile_size      │     128      │
+│ backward_q_tile_size  │     128      │
+│ backward_kv_tile_size │     128      │
+└───────────────────────┴──────────────┘
+
+                                      Profiler results                                      
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃           Operation           ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │          FmhaForward          │    1    │  1.318s   │
+│  CUTLASS  │    attention    │ Sm80 │         FmhaBackward          │    1    │  4.513s   │
+│  CUTLASS  │    reduction    │  -   │           Reduction           │    1    │  1.539ms  │
+│  PyTorch  │   elementwise   │  -   │ vectorized_elementwise_kernel │    2    │ 743.807us │
+│           │                 │      │             Total             │         │  5.833s   │
+└───────────┴─────────────────┴──────┴───────────────────────────────┴─────────┴───────────┘
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+backend='fa' problem.dtype=torch.float16
+| 2025-09-25 15:30:08,923 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                  Profiler results                                   
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃    Framework    ┃ Kernel category ┃ Arch ┃    Operation     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│ Flash Attention │    attention    │  -   │   FlashForward   │    1    │ 777.173ms │
+│ Flash Attention │    attention    │  -   │  FlashBackward   │    1    │  2.216s   │
+│ Flash Attention │    reduction    │  -   │  FlashReduction  │    1    │  1.644ms  │
+│ Flash Attention │   elementwise   │  -   │ FlashElementwise │    1    │  1.240ms  │
+│                 │                 │      │      Total       │         │  2.997s   │
+└─────────────────┴─────────────────┴──────┴──────────────────┴─────────┴───────────┘

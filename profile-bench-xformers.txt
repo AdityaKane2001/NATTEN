@@ -1,0 +1,45 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-09-25 14:39:29,603 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 116.602ms │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  1.768ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 198.366us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │ 464.874ms │
+│           │                 │      │                      Total                       │         │ 583.442ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 2D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-09-25 14:39:42,382 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 471.255ms │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  3.520ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 395.901us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  1.891s   │
+│           │                 │      │                      Total                       │         │  2.366s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 3D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-09-25 14:40:14,481 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │  1.470s   │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  6.227ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 734.141us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  6.036s   │
+│           │                 │      │                      Total                       │         │  7.513s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘

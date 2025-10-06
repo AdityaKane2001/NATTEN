@@ -1,0 +1,122 @@
+****** Profiling 1D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:55:40,409 | [[ natten.profiling_utils.profiling ]] [ INFO ]: Using FAv3.
+| 2025-08-27 15:55:40,779 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                 Profiler results                                  
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 14.349ms │
+│           │                 │      │         Total         │         │ 14.349ms │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴──────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:55:48,054 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                               
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 3.503ms  │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │ 24.064us │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │ 14.634ms │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │ 26.592us │
+│           │                 │      │                      Total                       │         │ 18.187ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴──────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:55:56,256 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                               
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃ Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 5.291ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 8.896us  │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │ 23.077ms │
+│           │                 │      │                      Total                       │         │ 28.376ms │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴──────────┘
+****** Profiling 2D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:56:03,297 | [[ natten.profiling_utils.profiling ]] [ INFO ]: Using FAv3.
+| 2025-08-27 15:56:03,558 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                  Profiler results                                  
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 927.265ms │
+│           │                 │      │         Total         │         │ 927.265ms │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴───────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:56:20,830 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 283.119ms │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │ 934.971us │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │ 922.318ms │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │  1.219ms  │
+│           │                 │      │                      Total                       │         │  1.208s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:56:41,679 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │ 472.287ms │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  3.521ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 395.966us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  1.888s   │
+│           │                 │      │                      Total                       │         │  2.364s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+****** Profiling 3D use case...
+--- Profiling Flash Attention...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:57:14,415 | [[ natten.profiling_utils.profiling ]] [ INFO ]: Using FAv3.
+| 2025-08-27 15:57:14,748 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                 Profiler results                                 
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃       Operation       ┃ # calls ┃ Runtime ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│  CUTLASS  │        -        │ Sm80 │ cutlass.device_kernel │    4    │ 2.989s  │
+│           │                 │      │         Total         │         │ 2.989s  │
+└───────────┴─────────────────┴──────┴───────────────────────┴─────────┴─────────┘
+--- Profiling cudnn...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:57:54,609 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_fprop_wmma_f16_knob_3_64x64x128_4x... │    1    │ 874.547ms │
+│   cuDNN   │        -        │  -   │    cudnn.fusion.compute_dot_do_o_specialized     │    1    │  1.660ms  │
+│   cuDNN   │    attention    │ Sm80 │ sm80_flash_bprop_wmma_f16_knob_27_32x128x128_... │    1    │  2.874s   │
+│   cuDNN   │        -        │  -   │       cudnn.fusion.rearrange_n_convert_dq        │    1    │  2.134ms  │
+│           │                 │      │                      Total                       │         │  3.752s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
+--- Profiling xformers...
+/home/akane38/miniconda3/envs/natten-fa3/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:81.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+| 2025-08-27 15:58:43,299 | [[ natten.profiling_utils.profiling ]] [ WARNING ]: Running standard self attention; ignoring NA parameters window size, stride, dilation, causal, etc.
+                                               Profiler results                                                
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Framework ┃ Kernel category ┃ Arch ┃                    Operation                     ┃ # calls ┃  Runtime  ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassF_f16_aligned_64x128_rf_sm80(PyTo... │    1    │  1.462s   │
+│  PyTorch  │   elementwise   │  -   │                elementwise_kernel                │    4    │  6.216ms  │
+│  PyTorch  │   elementwise   │  -   │          vectorized_elementwise_kernel           │    1    │ 730.847us │
+│  CUTLASS  │    attention    │ Sm80 │ fmha_cutlassB_f16_aligned_128x128_k128_seqali... │    1    │  6.000s   │
+│           │                 │      │                      Total                       │         │  7.469s   │
+└───────────┴─────────────────┴──────┴──────────────────────────────────────────────────┴─────────┴───────────┘
